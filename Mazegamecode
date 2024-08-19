@@ -1,0 +1,143 @@
+import pygame as pg
+
+from sys import path
+from sys import exit
+import os
+
+
+pg.init()
+screen = pg.display.set_mode((800, 600))
+clock = pg.time.Clock()
+font = pg.font.Font(None, 75)
+otherFont = pg.font.SysFont("Calibri", 100)
+
+# variables
+green = (0, 255, 0)
+light_blue = (0, 200, 207)
+brown = (133, 82, 0)
+black = (0, 0, 0)
+red = (168, 13, 13)
+yellow = (250, 210, 35)
+dark_red = (99, 7, 7)
+end_red = (255, 0, 0)
+blue = (0, 0, 255)
+white = (255, 255, 255)
+darkgreen = (17, 205, 47)
+pg.display.set_caption("Maze Game (Created by: Hrishet)")
+
+
+ball = pg.Rect(100, 150, 40, 40)
+end = pg.Rect(690, 250, 100, 100)
+Maze = []
+#Maze.append(pg.Rect(180, 90, 10, 170))
+#Maze.append(pg.Rect(90, 90, 10, 420))
+#Maze.append(pg.Rect(440, 170, 20, 240))
+#Maze.append(pg.Rect(650, 325, 20, 175))
+#Maze.append(pg.Rect(280, 400, 20, 100))
+#Maze.append(pg.Rect(690, 100, 10, 135))
+
+#Maze.append(pg.Rect(150, 200, 200, 10))
+#Maze.append(pg.Rect(190, 250, 500, 10))
+#Maze.append(pg.Rect(100, 500, 600, 10))
+#Maze.append(pg.Rect(90, 90, 600, 10))
+#Maze.append(pg.Rect(440, 350, 150, 10))
+#Maze.append(pg.Rect(90, 325, 250, 10))
+
+Maze.append(pg.Rect(180, 90, 10, 170))
+Maze.append(pg.Rect(90, 90, 10, 420))
+Maze.append(pg.Rect(440, 170, 10, 240))
+Maze.append(pg.Rect(690, 350, 10, 150))
+Maze.append(pg.Rect(170, 400, 10, 100))
+Maze.append(pg.Rect(690, 100, 10, 135))
+
+Maze.append(pg.Rect(170, 400, 200, 10))
+Maze.append(pg.Rect(190, 250, 500, 10))
+Maze.append(pg.Rect(100, 500, 600, 10))
+Maze.append(pg.Rect(90, 90, 600, 10))
+Maze.append(pg.Rect(440, 350, 150, 10))
+Maze.append(pg.Rect(90, 325, 250, 10))
+state = 0
+
+
+def menuscreen():
+    global state
+    global white
+    while state == 0:
+        screen.fill(white)
+        pg.event.pump()
+        keys = pg.key.get_pressed()
+        screen.fill(white)
+        exampleText = font.render("Maze Game: ", True, black)
+        exampleText2 = font.render("Click Right Key To Begin ", True, dark_red)
+        screen.blit(exampleText, (0, 0))
+        screen.blit(exampleText2, (0, 100))
+        if keys[pg.K_RIGHT] == 1:
+            state = 1
+        pg.display.flip()
+        clock.tick(30)
+
+
+def gamescreen():
+    global ball
+    global rect
+    global red
+    global state
+    while state == 1:
+        pg.event.pump()
+        key = pg.key.get_pressed()
+        if key[pg.K_UP] and ball[1] >= 0:
+            ball[1] -= 7
+        if key[pg.K_DOWN] and ball[1] < 560:
+            ball[1] += 7
+        if key[pg.K_LEFT] and ball[0] >= 0:
+            ball[0] -= 7
+        if key[pg.K_RIGHT] and ball[0] < 760:
+            ball[0] += 7
+        screen.fill(black)
+        for wall in Maze:
+            pg.draw.rect(screen, dark_red, wall)
+            pg.draw.rect(screen, darkgreen, end)
+
+        for wall in Maze:
+            if ball.colliderect(wall):
+                ball = pg.Rect(100, 150, 40, 40)
+
+        pg.draw.ellipse(screen, darkgreen, ball)
+        # drawing
+        if ball.colliderect(end):
+            state = 2
+            ball[0] = 100
+            ball[1] = 150
+        pg.display.flip()
+        clock.tick(45)
+
+
+def gameover():
+    global state
+    global white
+    while state == 2:
+        screen.fill(white)
+        pg.event.pump()
+        keys = pg.key.get_pressed()
+        screen.fill(white)
+        exampleText = font.render("YOU COMPLETED THE GAME", True, black)
+        exampleText2 = font.render("GREAT JOB CLICK TAB TO GO AGAIN ", True, dark_red)
+        screen.blit(exampleText, (0, 0))
+        screen.blit(exampleText2, (0, 100))
+        if keys[pg.K_TAB] == 1:
+            state = 0
+        pg.display.flip()
+        clock.tick(30)
+
+
+while True:
+    if state == 0:
+        menuscreen()
+    if state == 1:
+        gamescreen()
+    if state == 2:
+        gameover()
+
+    screen.blit(screen, (400, 400))
+
+    pg.display.flip()
